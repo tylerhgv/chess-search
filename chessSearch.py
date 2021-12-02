@@ -156,7 +156,10 @@ def read_query_move(q):
     # Build an array of matching postings lists
     ply_no = 1
     for ply in q_plies:
-        postings.append(plies_index[ply][str(ply_no)])
+        if str(ply_no) in plies_index[ply]:
+            postings.append(plies_index[ply][str(ply_no)])
+        else:
+            postings.append([])
         ply_no += 1
 
     # Intersect lists & build results
