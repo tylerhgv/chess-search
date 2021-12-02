@@ -37,22 +37,29 @@ A simple search engine that allow searching for chess games based on queries abo
 
 - **How results are ranked:**
   - The goal of the algorithm is to rank results based on the following priorities:
+
     - **Priority #1:** Documents with more matching terms > documents with fewer matching terms.
     - **Priority #2:** Documents with more important terms > documents with less important terms.
     - If two documents have equal weight, fallback to default ranking (by most recent).
 
 - **How queries are processed:**
   - **Step 1:**
+  
     - Given a query string, a list of n terms [t1, t2,... tn] is extracted.
     - Terms are ordered by increasing document frequencies (t1 have the lowest df and therefore is the most significant).
+  
   - **Step 2:**
+  
     - Retrieve a list of postings lists [p1, p2,... pn] based on the terms.
     - p1 has the smallest size.
+  
   - **Step 3:**
-    - Intersect the lists, starting with intersection of n lists (Find documents that have all n terms). (<ins>Priority #1</ins>)
-    - If number of retrieved docs < 20, continue finding intersection of n-1 lists,... 1 list.
-    - In each iteration of intersecting n-k lists, prioritize docs that have terms with low df (t1 > t2 > ... > tn). (<ins>Priority #2</ins>)
+  
+    - Intersect the lists, starting with intersection of n lists (Find documents that have all n terms). (**Priority #1**)
+    - If number of retrieved docs < 20, continue finding intersection of n-1 lists, n-2 lists,... 1 list.
+    - In each iteration of intersecting n-k lists, prioritize docs that have terms with low df (t1 > t2 > ... > tn). (**Priority #2**)
     - Continue until 20 documents are retrieved.
+  
   - **Time Complexity:** This is not optimized, so probably very large. 
 
 <p>&nbsp;</p>
