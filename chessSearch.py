@@ -25,6 +25,7 @@ def read_query_name(q):
         terms_index = ujson.load(f)
 
     # Extract terms from query
+    print(f'[INFO] Raw query: "{q}"')
     q_raw = index_terms(q)
     q_terms = []
     for term in q_raw:
@@ -90,10 +91,10 @@ def read_query_name(q):
                 break
 
             # Compute intersection
-            print(f'[INFO] Retrieving docs that are in {n} posting lists...', end='')
+            print(f'[INFO] Retrieving games that are in {n} posting lists...', end='')
             r_temp = find_postings(postings, n)
 
-            # Add to result until 20 docs are retrieved
+            # Add to result until 20 entries are retrieved
             # Few things here:
             #   - Postings are ordered least to most recent by default
             #   - Therefore, n last items of r_temp are grabbed
@@ -114,6 +115,89 @@ def read_query_name(q):
 
             n -= 1
             print(f'DONE (Current: {len(results)} retrieved)')
+
+    # Reverse and return result
+    results.reverse()
+    return results
+
+
+def read_query_move(q):
+    """
+    Take a string query about opening moves and return a list of top 20 matching docs
+    :param q: Input query
+    :type q: str
+    :return: List of 20 matching docIDs
+    :rtype: list
+    """
+
+    postings = []
+    results = []
+
+    # Open inverted index for moves
+    with open('data/plies.json', 'r') as f:
+        plies_index = ujson.load(f)
+
+    # Extract terms from query
+    print(f'[INFO] Raw query: "{q}"')
+    q_raw = index_plies(q)
+    print(f'[INFO] Terms extracted from query: {q_raw}')
+
+    # Extract only valid plies from terms
+    # Strict matching; must be a valid & continuous series of plies
+    q_plies = []
+    for ply in q_raw:
+        if ply in plies_index:
+            q_plies.append(ply)
+        # Break if invalid ply encountered
+        else:
+            break
+    print(f'[INFO] Ply sequence extracted from query: {q_plies} (Length: {len(q_plies)})')
+
+    # Build an array of matching postings lists
+    ply_no = 1
+    for ply in q_plies:
+        postings.append(plies_index[ply][str(ply_no)])
+        ply_no += 1
+
+    # Intersect lists & build results
+    print('[INFO] Begin building results')
+    n = len(postings)
+    while len(results) < 20:
+        # Main idea behind the algorithm:
+        # Step 1:
+        #   - A list of maximum 6 plies (ply1,ply2,... ply6) is given
+        #   - The entire list of plies must be valid plies
+        # Step 2:
+        #   - Retrieve a list of 6 postings lists (pos1,pos2,... pos6) such that:
+        #       - pos[i] = games that contain ply[i] as the [i]th move
+        #       (e.g.
+        #           Ply sequence: [e4, e5, ...]
+        #           Postings list: pos2 = games that have e5 as the second move
+        #       )
+        # Step 3:
+        #   - Intersect the postings lists, starting with the first 6 lists
+        #       (Find games that match the entire 6 plies / 3 moves)
+        #   - If not enough 20 results, find intersection the first 5 lists, 4 lists,...
+        #   - Continue until reaching 20 results
+        # GOAL: To retrieve only games that match valid move sequences (strict matching)
+        #   - Ranking Priority: Game with more matching plies > game with fewer
+
+        # Break if everything exhausted
+        if n == 0:
+            break
+
+        # Compute intersection
+        print(f'[INFO] Retrieving games that match the first {n} plies...', end='')
+        r_temp = find_postings(postings[:n], n)
+
+        # Remove entries that are already in result
+        r_temp = clean(list(set(r_temp) - set(results)))
+
+        # Add to result until 20 entries are retrieved
+        num_needed = 20 - len(results)
+        results = r_temp[-num_needed:] + results
+        n -= 1
+        print(f'DONE (Current: {len(results)} retrieved)')
 
     # Reverse and return result
     results.reverse()
@@ -149,6 +233,25 @@ def index_terms(s):
 
     # Return list of terms
     return result
+
+
+def index_plies(s):
+    """
+    Build a list of plies from an input string. Only first 6 tokens are returned.
+    :param s: Input string
+    :type s: str
+    :return: List of plies
+    :rtype: list
+    """
+
+    # Normalize case
+    s = s.lower()
+
+    # Tokenize
+    result = word_tokenize(s)
+
+    # Return list of plies
+    return result[:6]
 
 
 def find_postings(p, n):
@@ -207,13 +310,28 @@ if __name__ == '__main__':
     print(f'DONE')
 
     # Read user query
+
+    # Query by name
+    # t_start = time.perf_counter()
+    # q_test = 'king indian anglo english defense formation'
+    # res = read_query_name(q_test)
+    # print(f'[INFO] Complete result list: {res}')
+    # i = 1
+    # for index in res:
+    #     print(f'[OUT] ({i}) GAME #{index}: {docs[str(index)]["openingName"]}')
+    #     i += 1
+    #
+    # t_elapsed = round(time.perf_counter() - t_start, 2)
+    # print(f'[INFO] Elapsed time: {t_elapsed}s')
+
+    # Query by move
     t_start = time.perf_counter()
-    q_test = 'king indian anglo english defense formation'
-    res = read_query_name(q_test)
+    q_test = 'e4 a6 bc4 b5 bb3'
+    res = read_query_move(q_test)
     print(f'[INFO] Complete result list: {res}')
     i = 1
-    for index in res:
-        print(f'[OUT] ({i}) GAME #{index}: {docs[str(index)]["openingName"]}')
+    for doc_id in res:
+        print(f'[OUT] ({i}) GAME #{doc_id}: {docs[str(doc_id)]["openingMoves"]}')
         i += 1
 
     t_elapsed = round(time.perf_counter() - t_start, 2)
