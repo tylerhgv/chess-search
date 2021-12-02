@@ -51,8 +51,8 @@ def read_query_name(q):
     # No intersect if only one postings list
     elif len(postings) == 1:
         print(f'[INFO] {len(postings)} postings list found. Return top 20')
-        postings.reverse()
-        results = postings[:20]
+        postings[0].reverse()
+        results = postings[0][:20]
         return results
 
     # Intersect if more than one posting list
@@ -169,15 +169,15 @@ def read_query_move(q):
         #   - The entire list of plies must be valid plies
         # Step 2:
         #   - Retrieve a list of 6 postings lists (pos1,pos2,... pos6) such that:
-        #       - pos[i] = games that contain ply[i] as the [i]th move
+        #       - pos[i] = games that contain ply[i] as the [i]th ply
         #       (e.g.
         #           Ply sequence: [e4, e5, ...]
-        #           Postings list: pos2 = games that have e5 as the second move
+        #           Postings list: pos2 = games that have e5 as the second ply
         #       )
         # Step 3:
         #   - Intersect the postings lists, starting with the first 6 lists
         #       (Find games that match the entire 6 plies / 3 moves)
-        #   - If not enough 20 results, find intersection the first 5 lists, 4 lists,...
+        #   - If not enough 20 results, find intersection of the first 5 lists, 4 lists,...
         #   - Continue until reaching 20 results
         # GOAL: To retrieve only games that match valid move sequences (strict matching)
         #   - Ranking Priority: Game with more matching plies > game with fewer
@@ -299,40 +299,41 @@ def clean(li):
     return li
 
 
-if __name__ == '__main__':
-    print('[INFO] Starting...')
-    nltk.download('punkt')
+# Testing section
+# if __name__ == '__main__':
+#     print('[INFO] Starting...')
+#     nltk.download('punkt')
+#
+#     # Load docs
+#     print('[INFO] Loading documents database...', end='')
+#     with open('data/docs.json', 'r') as infile:
+#         docs = ujson.load(infile)
+#     print(f'DONE')
+#
+#     # Read user query
+#
+#     # Query by name
+#     t_start = time.perf_counter()
+#     q_test = 'king'
+#     res = read_query_name(q_test)
+#     print(f'[INFO] Complete result list: {res}')
+#     i = 1
+#     for index in res:
+#         print(f'[OUT] ({i}) GAME #{index}: {docs[str(index)]["openingName"]}')
+#         i += 1
+#
+#     t_elapsed = round(time.perf_counter() - t_start, 2)
+#     print(f'[INFO] Elapsed time: {t_elapsed}s')
 
-    # Load docs
-    print('[INFO] Loading documents database...', end='')
-    with open('data/docs.json', 'r') as infile:
-        docs = ujson.load(infile)
-    print(f'DONE')
-
-    # Read user query
-
-    # Query by name
-    # t_start = time.perf_counter()
-    # q_test = 'king indian anglo english defense formation'
-    # res = read_query_name(q_test)
-    # print(f'[INFO] Complete result list: {res}')
-    # i = 1
-    # for index in res:
-    #     print(f'[OUT] ({i}) GAME #{index}: {docs[str(index)]["openingName"]}')
-    #     i += 1
-    #
-    # t_elapsed = round(time.perf_counter() - t_start, 2)
-    # print(f'[INFO] Elapsed time: {t_elapsed}s')
-
-    # Query by move
-    t_start = time.perf_counter()
-    q_test = 'e4 a6 bc4 b5 bb3'
-    res = read_query_move(q_test)
-    print(f'[INFO] Complete result list: {res}')
-    i = 1
-    for doc_id in res:
-        print(f'[OUT] ({i}) GAME #{doc_id}: {docs[str(doc_id)]["openingMoves"]}')
-        i += 1
-
-    t_elapsed = round(time.perf_counter() - t_start, 2)
-    print(f'[INFO] Elapsed time: {t_elapsed}s')
+#     # Query by move
+#     t_start = time.perf_counter()
+#     q_test = 'e4 a6 bc4 b5 bb3'
+#     res = read_query_move(q_test)
+#     print(f'[INFO] Complete result list: {res}')
+#     i = 1
+#     for doc_id in res:
+#         print(f'[OUT] ({i}) GAME #{doc_id}: {docs[str(doc_id)]["openingMoves"]}')
+#         i += 1
+#
+#     t_elapsed = round(time.perf_counter() - t_start, 2)
+#     print(f'[INFO] Elapsed time: {t_elapsed}s')
