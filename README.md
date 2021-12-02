@@ -17,7 +17,11 @@ A simple search engine that allow searching for chess games based on queries abo
 <p>&nbsp;</p>
 <h2 id="usage"> Usage </h2>
 
-- **How To Run:** (currently not implemented)
+- **How To Run:** 
+  - Install Python.
+  - Create a virtual environment & install requirements from requirements.txt.
+  - Activate the virtual environment. Usually the command is: ``` .\[venv name]\Scripts\activate ```.
+  - Run app.py from the project's root directory: ``` python app.py ```.
 
 - **Main Features:**
 
@@ -99,6 +103,20 @@ These are not optimized, so probably very large.
 <p>&nbsp;</p>
 <h2 id="screens"> Screenshots </h2>
 
-None at the moment
+Main screen.
+
+![1](https://user-images.githubusercontent.com/41291862/144515301-d065eb51-0758-4353-9476-48b28ee4027d.png)
+
+<p>&nbsp;</p>
+
+Searching by opening name.
+
+![2](https://user-images.githubusercontent.com/41291862/144515374-70acf8a3-7aeb-459d-ae04-5eb5dbc8cc78.png)
+
+<p>&nbsp;</p>
+
+Searching by opening moves.
+
+![3](https://user-images.githubusercontent.com/41291862/144515377-777830f7-4860-4450-be3d-acf0a203324c.png)
 
 <p>&nbsp;</p>
