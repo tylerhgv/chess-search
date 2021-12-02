@@ -56,8 +56,35 @@ A simple search engine that allow searching for chess games based on queries abo
     - If number of retrieved docs < 20, continue finding intersection of n-1 lists, n-2 lists,... 1 list.
     - In each iteration of intersecting n-k lists, prioritize docs that have terms with low df (t1 > t2 > ... > tn). (**Priority #2**)
     - Continue until 20 documents are retrieved.
+
+<h3> Search by Opening Moves </h3>
+
+- **How results are ranked:**
+  - The goal of the algorithm is to receive only games that match the exact valid move sequences.
+  - Due to the strict matching, the only ranking priority is: game with more matching plies > game with fewer matching plies.
+
+- **How queries are processed:**
+  - **Step 1:**
   
-  - **Time Complexity:** This is not optimized, so probably very large. 
+    - A list of maximum 6 plies [ply1, ply2,... ply6] is extracted.
+    - The entire list of plies must be valid plies.
+  
+  - **Step 2:**
+  
+    - Retrieve a list of 6 postings lists [pos1, pos2,... pos6] such that: pos[i] = games that contain ply[i] as the [i]th move.
+    - For example:
+      - Ply sequence: [e4, e5, ...].
+      - Postings list: pos2 = games that have e5 as the second move.
+  
+  - **Step 3:**
+  
+    - Intersect the postings lists, starting with the first 6 lists (Find games that match the entire 6 plies / 3 moves).
+    - If not enough 20 results, continue finding intersection of the first 5 lists, 4 lists,...
+    - Continue until 20 documents are retrieved.
+  
+<h3> Time Complexity </h3>
+
+These are not optimized, so probably very large. 
 
 <p>&nbsp;</p>
 <h2 id="tech"> Technologies Used </h2>
