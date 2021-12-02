@@ -12,9 +12,6 @@
   <a href="https://github.com/tylerhgv/chess-search/issues/"><img src="https://img.shields.io/github/issues-raw/tylerhgv/chess-search?color=orange"></a> 
 </p>
 
-<p>&nbsp;</p>
-<h2 id="overview"> Overview </h2>
-
 A simple search engine that allow searching for chess games based on queries about opening names & opening moves. Built with Python 3.10 and [python-chess](https://python-chess.readthedocs.io/en/latest/#).
 
 <p>&nbsp;</p>
