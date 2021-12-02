@@ -60,7 +60,7 @@ A simple search engine that allow searching for chess games based on queries abo
 <h3> Search by Opening Moves </h3>
 
 - **How results are ranked:**
-  - The goal of the algorithm is to receive only games that match the exact valid move sequences.
+  - The goal of the algorithm is to retrieve only games that match the exact valid move sequences.
   - Due to the strict matching, the only ranking priority is: game with more matching plies > game with fewer matching plies.
 
 - **How queries are processed:**
@@ -71,10 +71,10 @@ A simple search engine that allow searching for chess games based on queries abo
   
   - **Step 2:**
   
-    - Retrieve a list of 6 postings lists [pos1, pos2,... pos6] such that: pos[i] = games that contain ply[i] as the [i]th move.
+    - Retrieve a list of 6 postings lists [pos1, pos2,... pos6] such that: pos[i] = games that contain ply[i] as the [i]th ply.
     - For example:
       - Ply sequence: [e4, e5, ...].
-      - Postings list: pos2 = games that have e5 as the second move.
+      - Postings list: pos2 = games that have e5 as the second ply.
   
   - **Step 3:**
   
