@@ -98,7 +98,7 @@ These are not optimized, so probably very large.
 | Python 3.10 | Main development language. |
 | python-chess 1.7.0 | Library for handling .pgn files. |
 | nltk 3.6.5 | Library for natural language processing (tokenizing, stemming). |
-| PyQt (planned) | Framework for building GUI with Python. |
+| PyQt 5 | Framework for building GUI with Python. |
 
 <p>&nbsp;</p>
 <h2 id="screens"> Screenshots </h2>
